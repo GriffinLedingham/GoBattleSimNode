@@ -1,0 +1,4 @@
+[submodule "GoBattleSim"]
+	path = GoBattleSim
+	url = https://github.com/biowpn/GoBattleSim.git
+	branch = master
