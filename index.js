@@ -25,5 +25,6 @@ async function run(attacker, defender) {
   const result = await run(attacker, defender);
   jsonfile.writeFileSync(`${attacker}-${defender}-sim.json`, result);
 
+  console.log(`Wrote output to ${attacker}-${defender}-sim.json`);
   server.close()
 })();

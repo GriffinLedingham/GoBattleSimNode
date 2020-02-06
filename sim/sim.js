@@ -3,6 +3,8 @@ const GameMaster = require('./data/gamemaster.json');
 const PokemonData = GameMaster.pokemon;
 const MoveData = GameMaster.moves;
 
+const cliProgress = require('cli-progress');
+
 class Sim {
   constructor(attacker, defender, page) {
     this.page = page
@@ -37,11 +39,13 @@ class Sim {
   }
 
   async doSim() {
+    const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     const results = {};
     const defenderMoves = this.generateMoveset(this.defenderData)
+    bar1.start(defenderMoves.fastMoveset.length * defenderMoves.chargeMoveset.length, 0);
     for( let dFastMove of defenderMoves.fastMoveset) {
       for( let dChargeMove of defenderMoves.chargeMoveset) {
-        console.log('Simulating ::', this.attacker, this.defender, dFastMove, dChargeMove)
+        //console.log('Simulating ::', this.attacker, this.defender, dFastMove, dChargeMove)
         const input = this.getSimInput(dFastMove,dChargeMove);
         const sim = await this.page.evaluate(({input}) => {
           return GBS.request(input);
@@ -59,8 +63,10 @@ class Sim {
 
         if(results[dFastMove.toLowerCase()] == undefined) results[dFastMove.toLowerCase()] = {};
         results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()] = simResults;
+        bar1.increment();
       }
     }
+    bar1.stop();
     return results;
   }
 
