@@ -1,4 +1,5 @@
 const http = require('http');
+const jsonfile = require('jsonfile');
 
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
@@ -10,31 +11,19 @@ const server = http.createServer(function(req, res) {
   serve(req, res, done);
 });
 
-server.listen(80);
+server.listen(8001);
 
-const puppeteer = require('puppeteer');
+const attacker = process.argv[2]
+const defender = process.argv[3]
 
-const Sim = require('./sim/sim.js');
+async function run(attacker, defender) {
+  const gbs = require('./sim/gbs.js');
+  return await gbs.run([attacker], defender);
+}
 
 (async () => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto('http://localhost:80/GBS.html')
+  const result = await run(attacker, defender);
+  jsonfile.writeFileSync(`${attacker}-${defender}-sim.json`, result);
 
-  await page.waitFor(100);
-
-  const defender = 'Machamp';
-  const attackers = ['Moltres', 'Mewtwo'];
-  for(let i in attackers) {
-    const attacker = attackers[i];
-    const sim = new Sim(
-      attackers[i],
-      defender,
-      page)
-    const results = await sim.doSim();
-    console.log(results)
-  }
-
-  await browser.close();
   server.close()
 })();

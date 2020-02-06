@@ -26,11 +26,13 @@ class Sim {
       fastMoveset.push((MoveData.filter(obj => {
         return obj.moveId === roleData.fastMoves[j];
       }))[0].name)
+      break;
     }
     for(let j in roleData.chargedMoves) {
       chargeMoveset.push((MoveData.filter(obj => {
         return obj.moveId === roleData.chargedMoves[j];
       }))[0].name)
+      break;
     }
 
     return { fastMoveset, chargeMoveset };
@@ -49,6 +51,7 @@ class Sim {
             const sim = await this.page.evaluate(({input}) => {
               return GBS.request(input);
             }, {input});
+
             results.push(sim);
           }
         }
@@ -74,7 +77,7 @@ class Sim {
           parties:[
             {
               label:[],
-              revive:!1,
+              revive:false,
               name:"",
               enterDelay:0,
               pokemon:[
@@ -106,7 +109,7 @@ class Sim {
           parties:[
             {
               label:[],
-              revive:!1,
+              revive:false,
               name:"",
               enterDelay:0,
               pokemon:[
@@ -133,12 +136,6 @@ class Sim {
       ]
     };
     return simInput;
-  }
-}
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
   }
 }
 
