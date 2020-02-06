@@ -1,10 +1,11 @@
 {
-  "name": "gobattlesim",
+  "name": "gobattlesimnode",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "git submodule update --init && cd GoBattleSim && tar -xf pokemongo.tar && cd .. && npm install"
   },
   "repository": {
     "type": "git",
