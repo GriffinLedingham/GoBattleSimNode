@@ -26,41 +26,45 @@ class Sim {
       fastMoveset.push((MoveData.filter(obj => {
         return obj.moveId === roleData.fastMoves[j];
       }))[0].name)
-      break;
     }
     for(let j in roleData.chargedMoves) {
       chargeMoveset.push((MoveData.filter(obj => {
         return obj.moveId === roleData.chargedMoves[j];
       }))[0].name)
-      break;
     }
 
     return { fastMoveset, chargeMoveset };
   }
 
   async doSim() {
-    const results = [];
-    const attackerMoves = this.generateMoveset(this.attackerData)
+    const results = {};
     const defenderMoves = this.generateMoveset(this.defenderData)
-    for( let aFastMove of attackerMoves.fastMoveset) {
-      for( let aChargeMove of attackerMoves.chargeMoveset) {
-        for( let dFastMove of defenderMoves.fastMoveset) {
-          for( let dChargeMove of defenderMoves.chargeMoveset) {
-            console.log('Simulating ::', this.attacker, aFastMove, aChargeMove, this.defender, dFastMove, dChargeMove)
-            const input = this.getSimInput(aFastMove,aChargeMove,dFastMove,dChargeMove);
-            const sim = await this.page.evaluate(({input}) => {
-              return GBS.request(input);
-            }, {input});
+    for( let dFastMove of defenderMoves.fastMoveset) {
+      for( let dChargeMove of defenderMoves.chargeMoveset) {
+        console.log('Simulating ::', this.attacker, this.defender, dFastMove, dChargeMove)
+        const input = this.getSimInput(dFastMove,dChargeMove);
+        const sim = await this.page.evaluate(({input}) => {
+          return GBS.request(input);
+        }, {input});
 
-            results.push(sim);
-          }
-        }
+        const simResults = {};
+
+        sim.forEach( result => {
+          const resultInput = result.input;
+          const aFast = resultInput.players[0].parties[0].pokemon[0].fmove
+          const aCharge = resultInput.players[0].parties[0].pokemon[0].cmove
+          if(simResults[aFast] == undefined) simResults[aFast] = {};
+          simResults[aFast][aCharge] = result.output.statistics
+        });
+
+        if(results[dFastMove.toLowerCase()] == undefined) results[dFastMove.toLowerCase()] = {};
+        results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()] = simResults;
       }
     }
     return results;
   }
 
-  getSimInput(aFastMove, aChargeMove, dFastMove, dChargeMove) {
+  getSimInput(dFastMove, dChargeMove) {
     const simInput = {
       battleMode:"raid",
       timelimit:180000,
@@ -92,10 +96,7 @@ class Sim {
                   defiv:"15",
                   cp:"",
                   raidTier:"1",
-                  fmove:this.aFastMove,
                   strategy:"ATTACKER_NO_DODGE",
-                  cmove:this.aChargeMove,
-                  cmove2:this.aChargeMove
                 }
               ]
             }
