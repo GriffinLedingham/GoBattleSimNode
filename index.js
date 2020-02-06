@@ -31,24 +31,12 @@ const puppeteer = require('puppeteer');
   const attackers = ['Moltres', 'Mewtwo'];
   for(let i in attackers) {
     const attacker = attackers[i];
-    const attackerData = (PokemonData.filter(obj => {
-      return obj.speciesName === attacker;
-    }))[0]
-    for(let j in attackerData.fastMoves) {
-      for(let k in attackerData.chargedMoves) {
-        const s = new Sim(
-          attackers[i],
-          attackerData.fastMoves[j],
-          attackerData.chargedMoves[k],
-          defender)
-        console.log(attacker, attackerData.fastMoves[j], attackerData.chargedMoves[k])
-        const input = s.getSimInput()
-        const sim = await page.evaluate(({input}) => {
-          return GBS.request(input);
-        }, {input});
-        console.log(sim[0].output.statistics)
-      }
-    }
+    const sim = new Sim(
+      attackers[i],
+      defender,
+      page)
+    const results = await sim.doSim();
+    console.log(results)
   }
 
   await browser.close();
