@@ -62,7 +62,8 @@ class Sim {
         });
 
         if(results[dFastMove.toLowerCase()] == undefined) results[dFastMove.toLowerCase()] = {};
-        results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()] = simResults;
+        if(results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()] == undefined) results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()] = {};
+        results[dFastMove.toLowerCase()][dChargeMove.toLowerCase()][this.attacker] = simResults;
         bar1.increment();
       }
     }
