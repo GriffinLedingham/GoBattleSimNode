@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "git submodule update --init && cd GoBattleSim && tar -xf pokemongo.tar && cd .. && npm install"
+    "setup": "git submodule update --init && cd GoBattleSim && tar -xf pokemongo.tar && cd .. && yarn install",
+    "sim": "node index.js"
   },
   "repository": {
     "type": "git",
